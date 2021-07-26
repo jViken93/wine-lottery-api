@@ -24,13 +24,21 @@ class ticketsViewSet(viewsets.ModelViewSet):
     def get_winner(self, request, pk=None):
         """Method for drawing a winner"""
         max_id = models.Tickets.objects.all().aggregate(max_id=Max('id'))['max_id']
-        while True:
+        for i in models.Tickets.objects.all():
             pk = random.randint(1, max_id)
             winner = models.Tickets.objects.filter(pk=pk).first()
-            count = models.Tickets.objects.count()
-            if winner and winner.is_winner == False and count <= 5:
+            all_winners = models.Tickets.objects.filter(is_winner = True)
+            winners_count = all_winners.count()
+            if winner and winner.is_winner == False and winners_count <= 5:
                 winner.is_winner = True
                 winner.save()
-                return Response(f'Winner is {winner.participant}')
-            else:
-                return Response('All the winners have been drawn! Congratulations to all the winners')
+                winner_is = f'Vinneren er {winner.participant}'
+                return Response({'Winner': winner_is})
+        return Response({'Winner': 'Alle vinnere er trukket! Gratulerer til alle som vant'})
+
+    @action(detail=False, name='get_all_winners')
+    def get_all_winners(self, request, pk=None):
+        """Returns all the the winners"""
+        all_winners = models.Tickets.objects.filter(is_winner = True)
+        serializer = serializers.TicketsSerializers(all_winners, many=True)
+        return Response(serializer.data)
