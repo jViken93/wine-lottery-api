@@ -6,7 +6,7 @@ class LotteryRegistrationSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = models.LotteryRegistration
-        fields = ('id', 'full_name', 'email', 'tickets_to_buy')
+        fields = ('id', 'first_name', 'last_name', 'email', 'tickets_to_buy')
 
 class TicketsSerializers(serializers.ModelSerializer):
     """serializers for ticket items"""
@@ -20,4 +20,4 @@ class TicketsSerializers(serializers.ModelSerializer):
 
     def get_participant(self, obj):
         """Get the name of the participant instead of a number on forign key"""
-        return(obj.participant.full_name)
+        return(obj.participant.first_name)

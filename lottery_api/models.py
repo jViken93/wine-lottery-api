@@ -6,7 +6,8 @@ import string
 
 class LotteryRegistration(models.Model):
     """Lottery user registration"""
-    full_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30, null=True)
     email = models.EmailField('User Email')
     tickets_to_buy = models.IntegerField()
 
@@ -15,7 +16,7 @@ class LotteryRegistration(models.Model):
 
     def __str__(self):
         """Return the model last and first name as String"""
-        return self.full_name
+        return self.first_name + " " + self.last_name
 
 class Tickets(models.Model):
     """Model for tickets"""

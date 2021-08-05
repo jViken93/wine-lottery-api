@@ -25,21 +25,20 @@ class ticketsViewSet(viewsets.ModelViewSet):
         """Method for drawing a winner"""
         max_id = models.Tickets.objects.all().aggregate(max_id=Max('id'))['max_id']
 
-        for i in models.Tickets.objects.all():
+        """Count how many have won"""
+        all_winners = models.Tickets.objects.filter(is_winner = True)
+        winners_count = all_winners.count()
+
+        while winners_count <= 4:
             """get a random id number"""
             pk = random.randint(1, max_id)
-            winner = models.Tickets.objects.filter(pk=pk).first()
+            winner = models.Tickets.objects.filter(pk=pk, is_winner = False).first()
 
-            """Count how many have won"""
-            all_winners = models.Tickets.objects.filter(is_winner = True)
-            winners_count = all_winners.count()
-
-            if winner and winner.is_winner == False and winners_count <= 5:
+            if winner and winner.is_winner == False:
                 winner.is_winner = True
                 winner.save()
                 winner_is = f'Vinneren er {winner.participant}'
                 return Response({'Winner': winner_is})
-
         return Response({'Winner': 'Alle vinnere er trukket! Gratulerer til alle som vant'})
 
     @action(detail=False, name='get_all_winners')
